@@ -17,7 +17,7 @@ if (isset($_SESSION['username'])) {
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>PHPJabbers.com | Free Shopping Website Template</title>
+    <title>Phone Shopping</title>
 
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,6 +32,24 @@ if (isset($_SESSION['username'])) {
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400,500,600,700,800,900" rel="stylesheet">
 
     <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+    <style>
+    .product-card {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+        text-align: center;
+    }
+
+    .image {
+        width: 200px;
+        height: 200px;
+    }
+    </style>
 </head>
 
 <body>
@@ -113,7 +131,7 @@ if (isset($_SESSION['username'])) {
                                 habitasse platea dictumst. Vel sequi odit similique repudiandae ipsum iste, quidem
                                 tenetur id impedit, eaque et, aliquam quod.</p>
                             <div class="blue-button">
-                                <a href="about-us.php">Discover More</a>
+                                <a>Discover More</a>
                             </div>
 
                             <br>
@@ -131,132 +149,53 @@ if (isset($_SESSION['username'])) {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="section-heading">
-                            <span>Featured Products</span>
-                            <h2>Lorem ipsum dolor sit amet ctetur.</h2>
+
+                            <h1>DANH SÁCH SẢN PHẨM</h1>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-4 col-sm-6 col-xs-12">
-                        <div class="featured-item">
-                            <div class="thumb">
-                                <img src="img/product-1-720x480.jpg" alt="">
-                            </div>
-                            <div class="down-content">
-                                <h4>Lorem ipsum dolor sit amet.</h4>
+                <?php
+                //Kết nối đến cơ sở dữ liệu
+                include("./ConnectDB/database.php");
 
-                                <span><del><sup>$</sup>99.00 </del> <strong><sup>$</sup>79.00</strong></span>
+                // Truy vấn SQL để lấy thông tin sản phẩm từ bảng Products
+                $sql = "SELECT id, tensanpham, gia, image FROM products";
+                $result = $conn->query($sql);
 
-                                <p>Vestibulum id est eu felis vulputate hendrerit. Suspendisse dapibus turpis in dui
-                                    pulvinar imperdiet. Nunc consectetur.</p>
+                if ($result->num_rows > 0) {
+                    echo "<div class='row d-flex flex-row row-cols-3'>";
+                    // Hiển thị các Card sản phẩm
+                    while ($row = $result->fetch_assoc()) {
 
-                                <div class="text-button">
-                                    <a href="product-details.php">View More</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        $images = explode(';', $row['image']);
+                        echo "<a class='text-decoration-none' href='product_details.php?product_id=" . $row["id"] . "'>";
+                        echo "<div class='col product-card shadow rounded'>";
+                        echo "<img src='./img/" . $images[0] . "' alt='Ảnh sản phẩm' class='image'><br><br>";
+                        echo "<h1 class='text-dark'>" . $row['tensanpham'] . "</h1>";
+                        $formatted_price = number_format($row["gia"], 0, ',', '.') . "";
+                        echo "<h3 class='text-secondary' >Giá: " . $formatted_price . "&nbsp;VNĐ</h3>";
+                        echo "<hr>";
+                        echo "<h3 class='text-warning'>XEM SẢN PHẨM</h3>";
+                        echo "</div>";
 
-                    <div class="col-md-4 col-sm-6 col-xs-12">
-                        <div class="featured-item">
-                            <div class="thumb">
-                                <img src="img/product-2-720x480.jpg" alt="">
-                            </div>
-                            <div class="down-content">
-                                <h4>Lorem ipsum dolor sit.</h4>
+                        echo "</a>";
 
-                                <span><del><sup>$</sup>999.00 </del> <strong><sup>$</sup>779.00</strong></span>
 
-                                <p>Vestibulum id est eu felis vulputate hendrerit. Suspendisse dapibus turpis in dui
-                                    pulvinar imperdiet. Nunc consectetur.</p>
 
-                                <div class="text-button">
-                                    <a href="product-details.php">View More</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    }
+                    echo "</div>";
 
-                    <div class="col-md-4 col-sm-6 col-xs-12">
-                        <div class="featured-item">
-                            <div class="thumb">
-                                <img src="img/product-3-720x480.jpg" alt="">
-                            </div>
-                            <div class="down-content">
-                                <h4>Lorem ipsum dolor sit amet.</h4>
 
-                                <span><del><sup>$</sup>1999.00 </del> <strong><sup>$</sup>1779.00</strong></span>
+                } else {
+                    echo "Không có sản phẩm nào.";
+                }
 
-                                <p>Vestibulum id est eu felis vulputate hendrerit. Suspendisse dapibus turpis in dui
-                                    pulvinar imperdiet. Nunc consectetur.</p>
+                $conn->close();
 
-                                <div class="text-button">
-                                    <a href="product-details.php">View More</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="col-md-4 col-sm-6 col-xs-12">
-                        <div class="featured-item">
-                            <div class="thumb">
-                                <img src="img/product-4-720x480.jpg" alt="">
-                            </div>
-                            <div class="down-content">
-                                <h4>Lorem ipsum dolor sit amet.</h4>
+                ?>
 
-                                <span><del><sup>$</sup>99.00 </del> <strong><sup>$</sup>79.00</strong></span>
 
-                                <p>Vestibulum id est eu felis vulputate hendrerit. Suspendisse dapibus turpis in dui
-                                    pulvinar imperdiet. Nunc consectetur.</p>
-
-                                <div class="text-button">
-                                    <a href="product-details.php">View More</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 col-sm-6 col-xs-12">
-                        <div class="featured-item">
-                            <div class="thumb">
-                                <img src="img/product-5-720x480.jpg" alt="">
-                            </div>
-                            <div class="down-content">
-                                <h4>Lorem ipsum dolor sit.</h4>
-
-                                <span><del><sup>$</sup>999.00 </del> <strong><sup>$</sup>779.00</strong></span>
-
-                                <p>Vestibulum id est eu felis vulputate hendrerit. Suspendisse dapibus turpis in dui
-                                    pulvinar imperdiet. Nunc consectetur.</p>
-
-                                <div class="text-button">
-                                    <a href="product-details.php">View More</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 col-sm-6 col-xs-12">
-                        <div class="featured-item">
-                            <div class="thumb">
-                                <img src="img/product-6-720x480.jpg" alt="">
-                            </div>
-                            <div class="down-content">
-                                <h4>Lorem ipsum dolor sit amet.</h4>
-
-                                <span><del><sup>$</sup>1999.00 </del> <strong><sup>$</sup>1779.00</strong></span>
-
-                                <p>Vestibulum id est eu felis vulputate hendrerit. Suspendisse dapibus turpis in dui
-                                    pulvinar imperdiet. Nunc consectetur.</p>
-
-                                <div class="text-button">
-                                    <a href="product-details.php">View More</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
 

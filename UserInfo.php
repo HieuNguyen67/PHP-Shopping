@@ -21,7 +21,7 @@ $result = $conn->query($select_query);
 
 // Kiểm tra xem có thông tin người dùng hay không
 
-    // Kiểm tra xem có kết quả hay không
+// Kiểm tra xem có kết quả hay không
 // Kiểm tra xem có kết quả hay không
 
 
@@ -35,7 +35,7 @@ $conn->close();
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>PHPJabbers.com | Free Shopping Website Template</title>
+    <title>Phone Shopping</title>
 
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -45,7 +45,7 @@ $conn->close();
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
+        </script>
     <link rel="stylesheet" href="css/fontAwesome.css">
     <link rel="stylesheet" href="css/hero-slider.css">
     <link rel="stylesheet" href="css/owl-carousel.css">
@@ -81,20 +81,20 @@ $conn->close();
 
                                 <li><a href="contact.php">Contact Us</a></li>
                                 <?php if ($loggedIn): ?>
-                                <li><a href="checkout.php">Giỏ hàng</a></li>
-                                <li><a href="UserInfo.php">Xin chào,
-                                        <?php echo $username1; ?>
-                                    </a></li>
-                                <li><a href="index.php?logout=true">
-                                        <form class="dropdown-item" action="logout.php" method="post">
-                                            <input type="submit" value="Đăng xuất"
-                                                style="border: none; background-color: transparent ;">
+                                    <li><a href="checkout.php">Giỏ hàng</a></li>
+                                    <li><a href="UserInfo.php">Xin chào,
+                                            <?php echo $username1; ?>
+                                        </a></li>
+                                    <li><a href="index.php?logout=true">
+                                            <form class="dropdown-item" action="logout.php" method="post">
+                                                <input type="submit" value="Đăng xuất"
+                                                    style="border: none; background-color: transparent ;">
 
-                                        </form>
-                                    </a></li>
+                                            </form>
+                                        </a></li>
                                 <?php else: ?>
-                                <li><a href="./login.php">Đăng nhập</a></li>
-                                <li><a href="./dangky.php">Đăng ký</a></li>
+                                    <li><a href="./login.php">Đăng nhập</a></li>
+                                    <li><a href="./dangky.php">Đăng ký</a></li>
                                 <?php endif; ?>
                             </ul>
                         </nav><!-- / #primary-nav -->
@@ -127,11 +127,11 @@ $conn->close();
 
             <tbody>
                 <?php
-                                    // Hiển thị dữ liệu từ cơ sở dữ liệu trong bảng HTML
-                    
-                    if ($result->num_rows > 0) {
-                        // Lặp qua các hàng kết quả và hiển thị thông tin
-                        while ($row = $result->fetch_assoc()) {
+                // Hiển thị dữ liệu từ cơ sở dữ liệu trong bảng HTML
+                
+                if ($result->num_rows > 0) {
+                    // Lặp qua các hàng kết quả và hiển thị thông tin
+                    while ($row = $result->fetch_assoc()) {
                         echo "<div class='row d-flex flex-row'>";
                         echo "<div class='col col-5'>";
                         echo "<h2  class='text-secondary fw-bold'>Họ và tên: <span class='text-primary fw-normal'>" . $row['fullname'] . "</span></h2><br><hr>";
@@ -149,15 +149,15 @@ $conn->close();
                             <h2>Sửa hồ sơ</h2>
                         </button></a>";
                         echo "</div>";
-                     
-                            
+
+
                         echo "</div>";
 
                     }
-                    } else {
-                        echo "Không tìm thấy thông tin khách hàng.";
-                    }
-                                    ?>
+                } else {
+                    echo "Không tìm thấy thông tin khách hàng.";
+                }
+                ?>
 
 
 

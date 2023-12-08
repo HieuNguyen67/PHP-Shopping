@@ -216,8 +216,3 @@ $products_data = $result->fetch_assoc();
 </body>
 
 </html>
-
-<?php
-// Đóng kết nối đến cơ sở dữ liệu
-$conn->close();
-?>

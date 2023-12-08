@@ -54,7 +54,7 @@ $user_data = $result->fetch_assoc();
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>PHPJabbers.com | Free Shopping Website Template</title>
+    <title>Phone Shopping</title>
 
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -64,7 +64,7 @@ $user_data = $result->fetch_assoc();
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
+        </script>
     <link rel="stylesheet" href="css/fontAwesome.css">
     <link rel="stylesheet" href="css/hero-slider.css">
     <link rel="stylesheet" href="css/owl-carousel.css">
@@ -100,20 +100,20 @@ $user_data = $result->fetch_assoc();
 
                                 <li><a href="contact.php">Contact Us</a></li>
                                 <?php if ($loggedIn): ?>
-                                <li><a href="checkout.php">Giỏ hàng</a></li>
-                                <li><a href="UserInfo.php">Xin chào,
-                                        <?php echo $username1; ?>
-                                    </a></li>
-                                <li><a href="index.php?logout=true">
-                                        <form class="dropdown-item" action="logout.php" method="post">
-                                            <input type="submit" value="Đăng xuất"
-                                                style="border: none; background-color: transparent ;">
+                                    <li><a href="checkout.php">Giỏ hàng</a></li>
+                                    <li><a href="UserInfo.php">Xin chào,
+                                            <?php echo $username1; ?>
+                                        </a></li>
+                                    <li><a href="index.php?logout=true">
+                                            <form class="dropdown-item" action="logout.php" method="post">
+                                                <input type="submit" value="Đăng xuất"
+                                                    style="border: none; background-color: transparent ;">
 
-                                        </form>
-                                    </a></li>
+                                            </form>
+                                        </a></li>
                                 <?php else: ?>
-                                <li><a href="./login.php">Đăng nhập</a></li>
-                                <li><a href="./dangky.php">Đăng ký</a></li>
+                                    <li><a href="./login.php">Đăng nhập</a></li>
+                                    <li><a href="./dangky.php">Đăng ký</a></li>
                                 <?php endif; ?>
                             </ul>
                         </nav><!-- / #primary-nav -->
@@ -134,8 +134,8 @@ $user_data = $result->fetch_assoc();
                 </div>
                 <br> <br>
                 <?php if (isset($message)) {
-    echo '<h3 style="color:red;">' . $message . '</h3><br>';
-} ?>
+                    echo '<h3 style="color:red;">' . $message . '</h3><br>';
+                } ?>
                 <!-- Biểu mẫu sửa thông tin -->
                 <form method="post" action="" class="needs-validation" novalidate>
                     <input type="hidden" name="user_id" value="<?php echo $user_data['id']; ?>">

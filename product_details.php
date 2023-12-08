@@ -17,7 +17,7 @@ if (isset($_SESSION['username'])) {
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>PHPJabbers.com | Free Shopping Website Template</title>
+    <title>Phone Shopping</title>
 
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -35,22 +35,22 @@ if (isset($_SESSION['username'])) {
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-    </script>
+        </script>
     <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
 
-    .hinhanh {
-        width: 100px;
-        height: 100px;
-    }
+        .hinhanh {
+            width: 100px;
+            height: 100px;
+        }
 
-    .image1 {
-        width: 400px;
-        height: 400px;
-    }
+        .image1 {
+            width: 400px;
+            height: 400px;
+        }
     </style>
 </head>
 
@@ -78,20 +78,20 @@ if (isset($_SESSION['username'])) {
 
                                 <li><a href="contact.php">Contact Us</a></li>
                                 <?php if ($loggedIn): ?>
-                                <li><a href="checkout.php">Giỏ hàng</a></li>
-                                <li><a href="UserInfo.php">Xin chào,
-                                        <?php echo $username; ?>
-                                    </a></li>
-                                <li><a href="index.php?logout=true">
-                                        <form class="dropdown-item" action="logout.php" method="post">
-                                            <input type="submit" value="Đăng xuất"
-                                                style="border: none; background-color: transparent ;">
+                                    <li><a href="checkout.php">Giỏ hàng</a></li>
+                                    <li><a href="UserInfo.php">Xin chào,
+                                            <?php echo $username; ?>
+                                        </a></li>
+                                    <li><a href="index.php?logout=true">
+                                            <form class="dropdown-item" action="logout.php" method="post">
+                                                <input type="submit" value="Đăng xuất"
+                                                    style="border: none; background-color: transparent ;">
 
-                                        </form>
-                                    </a></li>
+                                            </form>
+                                        </a></li>
                                 <?php else: ?>
-                                <li><a href="./login.php">Đăng nhập</a></li>
-                                <li><a href="./dangky.php">Đăng ký</a></li>
+                                    <li><a href="./login.php">Đăng nhập</a></li>
+                                    <li><a href="./dangky.php">Đăng ký</a></li>
                                 <?php endif; ?>
                             </ul>
                         </nav><!-- / #primary-nav -->
@@ -118,86 +118,86 @@ if (isset($_SESSION['username'])) {
         <section class=" featured-places">
                             <div class="container">
                                 <?php
-         
-         
-// Kiểm tra xem có session hay không, nếu không có thì khởi tạo session
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Kiểm tra xem có tham số product_id trong URL không
-if(isset($_GET['product_id'])) {
-    $product_id = $_GET['product_id'];
-
-    // Lưu product_id vào session để sử dụng ở các trang khác nếu cần
-    $_SESSION['product_id'] = $product_id;
-
-    // Kết nối đến cơ sở dữ liệu và truy vấn chi tiết sản phẩm
-    include("./ConnectDB/database.php");
-
-    $sql = "SELECT * FROM products WHERE id = $product_id";
-    $result = $conn->query($sql);
-        // Xử lý thêm vào giỏ hàng
-        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_to_cart'])) {
-            $quantity = $_POST['quantity'];
-
-            // Kiểm tra xem user đã đăng nhập hay chưa
-            if (!isset($_SESSION['user_id'])) {
-                // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
-                header("Location: login.php");
-                exit();
-            }
-            // Kiểm tra xem giỏ hàng của user đã tồn tại trong session hay chưa
-            if (!isset($_SESSION['user_cart'])) {
-                // Nếu chưa, tạo giỏ hàng cho user
-                $_SESSION['user_cart'] = [];
-            }
-
-            // Kiểm tra xem sản phẩm đã có trong giỏ hàng của user chưa
-            $product_exists = false;
-            foreach ($_SESSION['user_cart'] as &$item) {
-                if ($item['product_id'] == $product_id) {
-                    // Nếu có, cập nhật số lượng
-                    $item['quantity'] += $quantity;
-                    $product_exists = true;
-                    break;
-                }
-            }
-
-            // Nếu sản phẩm chưa có trong giỏ hàng của user, thêm mới vào
-            if (!$product_exists) {
-                $product = [
-                    'product_id' => $product_id,
-                    'quantity' => $quantity,
-                ];
-                array_push($_SESSION['user_cart'], $product);
-
-            }
 
 
-            // Chuyển hướng về trang product_details
-            header("Location: checkout.php");
-        }
+                                // Kiểm tra xem có session hay không, nếu không có thì khởi tạo session
+                                if (session_status() == PHP_SESSION_NONE) {
+                                    session_start();
+                                }
+
+                                // Kiểm tra xem có tham số product_id trong URL không
+                                if (isset($_GET['product_id'])) {
+                                    $product_id = $_GET['product_id'];
+
+                                    // Lưu product_id vào session để sử dụng ở các trang khác nếu cần
+                                    $_SESSION['product_id'] = $product_id;
+
+                                    // Kết nối đến cơ sở dữ liệu và truy vấn chi tiết sản phẩm
+                                    include("./ConnectDB/database.php");
+
+                                    $sql = "SELECT * FROM products WHERE id = $product_id";
+                                    $result = $conn->query($sql);
+                                    // Xử lý thêm vào giỏ hàng
+                                    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_to_cart'])) {
+                                        $quantity = $_POST['quantity'];
+
+                                        // Kiểm tra xem user đã đăng nhập hay chưa
+                                        if (!isset($_SESSION['user_id'])) {
+                                            // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                                            header("Location: login.php");
+                                            exit();
+                                        }
+                                        // Kiểm tra xem giỏ hàng của user đã tồn tại trong session hay chưa
+                                        if (!isset($_SESSION['user_cart'])) {
+                                            // Nếu chưa, tạo giỏ hàng cho user
+                                            $_SESSION['user_cart'] = [];
+                                        }
+
+                                        // Kiểm tra xem sản phẩm đã có trong giỏ hàng của user chưa
+                                        $product_exists = false;
+                                        foreach ($_SESSION['user_cart'] as &$item) {
+                                            if ($item['product_id'] == $product_id) {
+                                                // Nếu có, cập nhật số lượng
+                                                $item['quantity'] += $quantity;
+                                                $product_exists = true;
+                                                break;
+                                            }
+                                        }
+
+                                        // Nếu sản phẩm chưa có trong giỏ hàng của user, thêm mới vào
+                                        if (!$product_exists) {
+                                            $product = [
+                                                'product_id' => $product_id,
+                                                'quantity' => $quantity,
+                                            ];
+                                            array_push($_SESSION['user_cart'], $product);
+
+                                        }
+
+
+                                        // Chuyển hướng về trang product_details
+                                        header("Location: checkout.php");
+                                    }
 
                                     if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
+                                        $row = $result->fetch_assoc();
 
-        // Hiển thị chi tiết sản phẩm
-        echo "<div class='row d-flex flex-row'>";
-                        echo "<div class='col border rounded' >";
-                        $images = explode(';', $row['image']);
-                        echo "<p class='text-center'><img src='./img/" . $images[0] . "' alt='Ảnh sản phẩm' class='image1 ' ></p><br><hr>"; // Tách chuỗi thành mảng các đường dẫn hình ảnh
-                        foreach ($images as $image) {
-                            echo "<img src='./img/" . $image . "' alt='Ảnh sản phẩm' class='hinhanh'>";
-                        }
-                        echo "</div>";
-                        echo "<div class='col '><br> ";
-                        
-                        echo "<p style='font-size:40px;' class='text-dark fw-bold'>" . $row["tensanpham"] . "</p><br><br> ";
-                     // Định dạng giá theo VNĐ
-                        $formatted_price = number_format($row["gia"], 0, ',', '.') . "";
- 
-                        echo "<p style='font-size:30px;' class='text-danger fw-bold'> " . $formatted_price. "&nbsp;VNĐ</p><br>";
+                                        // Hiển thị chi tiết sản phẩm
+                                        echo "<div class='row d-flex flex-row'>";
+                                        echo "<div class='col border rounded' >";
+                                        $images = explode(';', $row['image']);
+                                        echo "<p class='text-center'><img src='./img/" . $images[0] . "' alt='Ảnh sản phẩm' class='image1 ' ></p><br><hr>"; // Tách chuỗi thành mảng các đường dẫn hình ảnh
+                                        foreach ($images as $image) {
+                                            echo "<img src='./img/" . $image . "' alt='Ảnh sản phẩm' class='hinhanh'>";
+                                        }
+                                        echo "</div>";
+                                        echo "<div class='col '><br> ";
+
+                                        echo "<p style='font-size:40px;' class='text-dark fw-bold'>" . $row["tensanpham"] . "</p><br><br> ";
+                                        // Định dạng giá theo VNĐ
+                                        $formatted_price = number_format($row["gia"], 0, ',', '.') . "";
+
+                                        echo "<p style='font-size:30px;' class='text-danger fw-bold'> " . $formatted_price . "&nbsp;VNĐ</p><br>";
 
 
 
@@ -207,19 +207,19 @@ if(isset($_GET['product_id'])) {
                                         echo "<input type='number' name='quantity' value='1' min='1' required class='fs-3'><br><br>";
                                         echo "<input type='submit' name='add_to_cart' value='Thêm vào giỏ hàng' class='btn btn-primary p-4 fs-3'>";
                                         echo "</form>";
-                        echo "</div>";
-                        echo "</div><br><br><br>";
-                        echo "<p  style='font-size:20px;' class='text-dark'>Mô tả: " . $row["mota"] . "</p>";
+                                        echo "</div>";
+                                        echo "</div><br><br><br>";
+                                        echo "<p  style='font-size:20px;' class='text-dark'>Mô tả: " . $row["mota"] . "</p>";
 
-    } else {
-        echo "Sản phẩm không tồn tại.";
-    }
+                                    } else {
+                                        echo "Sản phẩm không tồn tại.";
+                                    }
 
-    $conn->close();
-} else {
-    echo "Thiếu tham số product_id trong URL.";
-}
-?>
+                                    $conn->close();
+                                } else {
+                                    echo "Thiếu tham số product_id trong URL.";
+                                }
+                                ?>
 
 
 
@@ -291,7 +291,7 @@ if(isset($_GET['product_id'])) {
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript"></script>
     <script>
-    window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')
+        window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')
     </script>
 
     <script src="js/vendor/bootstrap.min.js"></script>

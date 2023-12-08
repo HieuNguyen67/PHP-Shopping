@@ -17,7 +17,7 @@ if (isset($_SESSION['username'])) {
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>PHPJabbers.com | Free Shopping Website Template</title>
+    <title>Phone Shopping</title>
 
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -59,20 +59,20 @@ if (isset($_SESSION['username'])) {
 
                                 <li class='active'><a href="contact.php">Contact Us</a></li>
                                 <?php if ($loggedIn): ?>
-                                <li><a href="checkout.php">Giỏ hàng</a></li>
-                                <li><a href="UserInfo.php">Xin chào,
-                                        <?php echo $username; ?>
-                                    </a></li>
-                                <li><a href="index.php?logout=true">
-                                        <form class="dropdown-item" action="logout.php" method="post">
-                                            <input type="submit" value="Đăng xuất"
-                                                style="border: none; background-color: transparent ;">
+                                    <li><a href="checkout.php">Giỏ hàng</a></li>
+                                    <li><a href="UserInfo.php">Xin chào,
+                                            <?php echo $username; ?>
+                                        </a></li>
+                                    <li><a href="index.php?logout=true">
+                                            <form class="dropdown-item" action="logout.php" method="post">
+                                                <input type="submit" value="Đăng xuất"
+                                                    style="border: none; background-color: transparent ;">
 
-                                        </form>
-                                    </a></li>
+                                            </form>
+                                        </a></li>
                                 <?php else: ?>
-                                <li><a href="./login.php">Đăng nhập</a></li>
-                                <li><a href="./dangky.php">Đăng ký</a></li>
+                                    <li><a href="./login.php">Đăng nhập</a></li>
+                                    <li><a href="./dangky.php">Đăng ký</a></li>
                                 <?php endif; ?>
                             </ul>
                         </nav><!-- / #primary-nav -->
@@ -219,7 +219,7 @@ if (isset($_SESSION['username'])) {
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript"></script>
     <script>
-    window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')
+        window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')
     </script>
 
     <script src="js/vendor/bootstrap.min.js"></script>
