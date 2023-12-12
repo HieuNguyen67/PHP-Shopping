@@ -4,7 +4,7 @@ session_start();
 $loggedIn = false;
 $username = '';
 
-// Kiểm tra xem đã đăng nhập chưa
+
 if (isset($_SESSION['username'])) {
     $loggedIn = true;
     $username = $_SESSION['username'];
@@ -32,7 +32,7 @@ if (isset($_SESSION['username'])) {
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-        </script>
+    </script>
 
     <link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400,500,600,700,800,900" rel="stylesheet">
 
@@ -64,20 +64,20 @@ if (isset($_SESSION['username'])) {
 
                                 <li><a href="contact.php">Contact Us</a></li>
                                 <?php if ($loggedIn): ?>
-                                    <li class='active'><a href="checkout.php">Giỏ hàng</a></li>
-                                    <li><a href="UserInfo.php">Xin chào,
-                                            <?php echo $username; ?>
-                                        </a></li>
-                                    <li><a href="index.php?logout=true">
-                                            <form class="dropdown-item" action="logout.php" method="post">
-                                                <input type="submit" value="Đăng xuất"
-                                                    style="border: none; background-color: transparent ;">
+                                <li class='active'><a href="checkout.php">Giỏ hàng</a></li>
+                                <li><a href="UserInfo.php">Xin chào,
+                                        <?php echo $username; ?>
+                                    </a></li>
+                                <li><a href="index.php?logout=true">
+                                        <form class="dropdown-item" action="logout.php" method="post">
+                                            <input type="submit" value="Đăng xuất"
+                                                style="border: none; background-color: transparent ;">
 
-                                            </form>
-                                        </a></li>
+                                        </form>
+                                    </a></li>
                                 <?php else: ?>
-                                    <li><a href="./login.php">Đăng nhập</a></li>
-                                    <li><a href="./dangky.php">Đăng ký</a></li>
+                                <li><a href="./login.php">Đăng nhập</a></li>
+                                <li><a href="./dangky.php">Đăng ký</a></li>
                                 <?php endif; ?>
 
 
@@ -136,112 +136,102 @@ if (isset($_SESSION['username'])) {
 
                 </div><br><br>
                 <?php
-
-                // Kiểm tra xem có session hay không, nếu không có thì khởi tạo session
-                if (session_status() == PHP_SESSION_NONE) {
-                    session_start();
-                }
-
-                // Kết nối đến cơ sở dữ liệu MySQL
-                include("./ConnectDB/database.php");
-                // Kiểm tra xem user đã đăng nhập hay chưa
-                if (!isset($_SESSION['user_id'])) {
-                    // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
-                    header("Location: login.php");
-                    exit();
-                }
-
-                $index = 0;
-                // Hiển thị danh sách đơn hàng đã thêm vào giỏ hàng của user
-                if (isset($_SESSION['user_cart']) && count($_SESSION['user_cart']) > 0) {
-
-                    $total_all = 0;
-                    foreach ($_SESSION['user_cart'] as $item) {
-                        // Truy vấn thông tin sản phẩm
-                        $product_id = $item['product_id'];
-                        $quantity = $item['quantity'];
-
-                        $sql_cart_product = "SELECT * FROM products WHERE id = $product_id";
-                        $result_cart_product = $conn->query($sql_cart_product);
-
-                        if ($result_cart_product->num_rows > 0) {
-                            $row_cart_product = $result_cart_product->fetch_assoc();
-                            $total = 0;
-
-                            $total = $quantity * $row_cart_product['gia'];
-                            $total_all += $total;
-                            $images = explode(';', $row_cart_product['image']);
-                            echo "<div class='row d-flex flex-row'>";
-                            echo "<div class='col'>";
-
-                            echo "<p class='text-center fs-3 text-dark'>" . $index++ . "</p>";
-                            echo "</div>";
-                            echo "<div class='col'>";
-                            echo "<p class='text-center fs-3  text-dark'>{$row_cart_product['tensanpham']}</p>";
-                            echo "</div>";
-
-                            echo "<div class='col'>";
-                            echo "<img src='./img/" . $images[0] . "' alt='Ảnh sản phẩm' class='image' style='width:150px; height:150px;'>";
-                            echo "</div>";
-
-                            echo "<div class='col'>";
-                            echo "<p  class='text-center fs-3  text-dark'>" . number_format($row_cart_product['gia'], 0, ',', '.') . "&nbsp;VNĐ</p>";
-                            echo "</div>";
-
-                            echo "<div class='col'>";
-                            echo "<p class='text-center fs-3  text-dark'>$quantity</p>";
-                            echo "</div>";
-
-                            echo "<div class='col'>";
-                            echo "<p   class='text-center fs-3 fw-bold text-danger'>" . number_format($total, 0, ',', '.') . "&nbsp;VNĐ</p>";
-                            echo "</div>";
-
-                            echo "<div class='col'>";
-                            echo "<p class='text-center fs-3  text-dark'><a href='remove_item.php?product_id={$item['product_id']}'><button class='btn btn-danger p-4'>Xoá</button></a></p>";
-                            echo "</div>";
-
-                            echo "</div>";
-
+                        if (session_status() == PHP_SESSION_NONE) {
+                            session_start();
                         }
-                    }
-                } else {
-                    echo "<p>Không có sản phẩm trong giỏ hàng.</p>";
-                }
 
-                // Đóng kết nối cơ sở dữ liệu
-                $conn->close();
+                        include("./ConnectDB/database.php");
 
+                        if (!isset($_SESSION['user_id'])) {
+                            header("Location: login.php");
+                            exit();
+                        }
 
+                        $index = 0;
 
-                // Chức năng đặt hàng
-                echo "<div class='row d-flex flex-row'>";
-                echo "<div class='col col-8'>";
+                        if (isset($_SESSION['user_cart']) && count($_SESSION['user_cart']) > 0) {
 
-                echo "</div>";
+                            $total_all = 0;
+                            foreach ($_SESSION['user_cart'] as $item) {
+                                $product_id = $item['product_id'];
+                                $quantity = $item['quantity'];
 
-                echo "<div class='col '>";
-                if (isset($total_all)) {
-                    echo "<h1 class='text-dark ms-4 fw-bold'>Tổng tiền : " . number_format($total_all, 0, ',', '.') . "&nbsp;VNĐ</h1>";
-                }
+                                $sql_cart_product = "SELECT * FROM products WHERE id = :product_id";
+                                $stmt_cart_product = $conn->prepare($sql_cart_product);
+                                $stmt_cart_product->bindParam(':product_id', $product_id);
+                                $stmt_cart_product->execute();
+                                $row_cart_product = $stmt_cart_product->fetch(PDO::FETCH_ASSOC);
 
+                                if ($row_cart_product) {
+                                    $total = 0;
+                                    $total = $quantity * $row_cart_product['gia'];
+                                    $total_all += $total;
+                                    $images = explode(';', $row_cart_product['image']);
+                                    echo "<div class='row d-flex flex-row'>";
+                                    echo "<div class='col'>";
+                                    echo "<p class='text-center fs-3 text-dark'>" . $index++ . "</p>";
+                                    echo "</div>";
+                                    echo "<div class='col'>";
+                                    echo "<p class='text-center fs-3  text-dark'>{$row_cart_product['tensanpham']}</p>";
+                                    echo "</div>";
 
-                echo "</div>";
-                echo "</div><br><br><br>";
+                                    echo "<div class='col'>";
+                                    echo "<img src='./img/" . $images[0] . "' alt='Ảnh sản phẩm' class='image' style='width:150px; height:150px;'>";
+                                    echo "</div>";
 
-                echo "<div class='row d-flex flex-row'>";
-                echo "<div class='col col-8'>";
+                                    echo "<div class='col'>";
+                                    echo "<p  class='text-center fs-3  text-dark'>" . number_format($row_cart_product['gia'], 0, ',', '.') . "&nbsp;VNĐ</p>";
+                                    echo "</div>";
 
-                echo "</div>";
+                                    echo "<div class='col'>";
+                                    echo "<p class='text-center fs-3  text-dark'>$quantity</p>";
+                                    echo "</div>";
 
-                echo "<div class='col '>";
+                                    echo "<div class='col'>";
+                                    echo "<p   class='text-center fs-3 fw-bold text-danger'>" . number_format($total, 0, ',', '.') . "&nbsp;VNĐ</p>";
+                                    echo "</div>";
 
-                echo "<form method='post' action='place_order.php'>";
-                echo "<button type='submit' class='btn btn-dark p-4 fs-3 col-10'>Đặt hàng</button>";
-                echo "</form>";
-                echo "</div>";
-                echo "</div>";
+                                    echo "<div class='col'>";
+                                    echo "<p class='text-center fs-3  text-dark'><a href='remove_item.php?product_id={$item['product_id']}'><button class='btn btn-danger p-4'>Xoá</button></a></p>";
+                                    echo "</div>";
 
-                ?>
+                                    echo "</div>";
+                                }
+                            }
+                        } else {
+                            echo "<p>Không có sản phẩm trong giỏ hàng.</p>";
+                        }
+
+                        // Đóng kết nối sau khi sử dụng
+                        $conn = null;
+
+                        // Chức năng đặt hàng
+                        echo "<div class='row d-flex flex-row'>";
+                        echo "<div class='col col-8'>";
+
+                        echo "</div>";
+
+                        echo "<div class='col '>";
+                        if (isset($total_all)) {
+                            echo "<h1 class='text-dark ms-4 fw-bold'>Tổng tiền : " . number_format($total_all, 0, ',', '.') . "&nbsp;VNĐ</h1>";
+                        }
+
+                        echo "</div>";
+                        echo "</div><br><br><br>";
+
+                        echo "<div class='row d-flex flex-row'>";
+                        echo "<div class='col col-8'>";
+
+                        echo "</div>";
+
+                        echo "<div class='col '>";
+                        echo "<form method='post' action='place_order.php'>";
+                        echo "<button type='submit' class='btn btn-dark p-4 fs-3 col-10'>Đặt hàng</button>";
+                        echo "</form>";
+                        echo "</div>";
+                        echo "</div>";
+?>
+
 
 
             </div>
@@ -312,7 +302,7 @@ if (isset($_SESSION['username'])) {
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript"></script>
     <script>
-        window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')
+    window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')
     </script>
 
     <script src="js/vendor/bootstrap.min.js"></script>

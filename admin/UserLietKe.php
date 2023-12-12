@@ -1,25 +1,28 @@
 <?php
 include("./checklogin.php");
-// Kết nối đến cơ sở dữ liệu
+
 include("../ConnectDB/database.php");
 
-// Xử lý khi người dùng nhấn nút Xoá
 if (isset($_POST['delete_user'])) {
     $user_id = $_POST['delete_user'];
 
-    // Thực hiện truy vấn để xoá người dùng
-    $delete_query = "DELETE FROM users WHERE id = '$user_id'";
-    if ($conn->query($delete_query) === TRUE) {
-        $message_delete= "Người dùng đã được xoá thành công.";
+    $delete_query = "DELETE FROM users WHERE id = :user_id";
+    $stmt = $conn->prepare($delete_query);
+    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        $message_delete = "Người dùng đã được xoá thành công.";
     } else {
-        echo "Lỗi xoá người dùng: " . $conn->error;
+        echo "Lỗi xoá người dùng: " . $stmt->errorInfo()[2];
     }
 }
 
-// Truy vấn để lấy danh sách người dùng
 $select_query = "SELECT * FROM users";
-$result = $conn->query($select_query);
+$result = $conn->prepare($select_query);
+$result->execute();
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -121,9 +124,9 @@ require("./include/topbar.php");
 
                                 <tbody>
                                     <?php
-                                    // Hiển thị dữ liệu từ cơ sở dữ liệu trong bảng HTML
-                                    $id1=1;
-                                    while ($row = $result->fetch_assoc()) {
+
+                                    $id1 = 1;
+                                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                                         echo "<tr>";
                                         echo "<td>" . $id1++ . "</td>";
                                         echo "<td>" . $row['username'] . "</td>";

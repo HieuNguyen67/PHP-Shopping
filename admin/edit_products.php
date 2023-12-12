@@ -1,9 +1,8 @@
 <?php
 include("./checklogin.php");
-// Thông tin kết nối đến cơ sở dữ liệu
+
 include("../ConnectDB/database.php");
 
-// Xử lý khi người dùng nhấn nút Cập nhật
 if (isset($_POST['update_products'])) {
     $products_id = $_POST['products_id'];
     $new_tensanpham = $_POST['new_tensanpham'];
@@ -11,12 +10,16 @@ if (isset($_POST['update_products'])) {
     $new_gia = $_POST['new_gia'];
     $new_soluong = $_POST['new_soluong'];
 
+    $update_query = "UPDATE products SET tensanpham=:new_tensanpham, mota=:new_mota, gia=:new_gia, soluong=:new_soluong WHERE id = :products_id";
 
+    $stmt_update = $conn->prepare($update_query);
+    $stmt_update->bindParam(':new_tensanpham', $new_tensanpham);
+    $stmt_update->bindParam(':new_mota', $new_mota);
+    $stmt_update->bindParam(':new_gia', $new_gia);
+    $stmt_update->bindParam(':new_soluong', $new_soluong);
+    $stmt_update->bindParam(':products_id', $products_id);
 
-    // Thực hiện truy vấn để cập nhật thông tin người dùng
-    $update_query = "UPDATE products SET tensanpham='$new_tensanpham', mota='$new_mota', gia='$new_gia', soluong='$new_soluong'   WHERE id = '$products_id'";
-
-    if ($conn->query($update_query) === TRUE) {
+    if ($stmt_update->execute()) {
         $message = "Sản phẩm đã được cập nhật thành công.";
         echo "<script>
      
@@ -25,20 +28,19 @@ if (isset($_POST['update_products'])) {
             }, 1500); // 3000 milliseconds = 3 seconds
           </script>";
     } else {
-        echo "Lỗi cập nhật thông tin sản phẩm: " . $conn->error;
+        echo "Lỗi cập nhật thông tin sản phẩm: " . $stmt_update->errorInfo()[2];
     }
 }
 
-// Lấy ID người dùng từ tham số URL
 $products_id = $_GET['id'];
 
-// Truy vấn để lấy thông tin người dùng cần sửa
-$select_query = "SELECT * FROM products WHERE id='$products_id'";
-$result = $conn->query($select_query);
-
-// Lấy dữ liệu người dùng hiện tại
-$products_data = $result->fetch_assoc();
+$select_query = "SELECT * FROM products WHERE id=:products_id";
+$stmt_select = $conn->prepare($select_query);
+$stmt_select->bindParam(':products_id', $products_id);
+$stmt_select->execute();
+$products_data = $stmt_select->fetch(PDO::FETCH_ASSOC);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

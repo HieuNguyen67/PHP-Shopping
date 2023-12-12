@@ -1,15 +1,16 @@
 <?php
-// Kết nối đến cơ sở dữ liệu và truy vấn chi tiết sản phẩm
+
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "shopping";
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-mysqli_set_charset($conn, 'UTF8');
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+try {
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
+    
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+ 
+} catch (PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
 }
-
 ?>

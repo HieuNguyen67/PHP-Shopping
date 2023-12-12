@@ -4,7 +4,7 @@ session_start();
 $loggedIn = false;
 $username = '';
 
-// Kiểm tra xem đã đăng nhập chưa
+
 if (isset($_SESSION['username'])) {
     $loggedIn = true;
     $username = $_SESSION['username'];
@@ -155,18 +155,16 @@ if (isset($_SESSION['username'])) {
                     </div>
                 </div>
                 <?php
-                //Kết nối đến cơ sở dữ liệu
                 include("./ConnectDB/database.php");
 
-                // Truy vấn SQL để lấy thông tin sản phẩm từ bảng Products
                 $sql = "SELECT id, tensanpham, gia, image FROM products";
-                $result = $conn->query($sql);
+                $stmt = $conn->prepare($sql);
+                $stmt->execute();
+                $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                if ($result->num_rows > 0) {
+                if (count($products) > 0) {
                     echo "<div class='row d-flex flex-row row-cols-3'>";
-                    // Hiển thị các Card sản phẩm
-                    while ($row = $result->fetch_assoc()) {
-
+                    foreach ($products as $row) {
                         $images = explode(';', $row['image']);
                         echo "<a class='text-decoration-none' href='product_details.php?product_id=" . $row["id"] . "'>";
                         echo "<div class='col product-card shadow rounded'>";
@@ -177,23 +175,17 @@ if (isset($_SESSION['username'])) {
                         echo "<hr>";
                         echo "<h3 class='text-warning'>XEM SẢN PHẨM</h3>";
                         echo "</div>";
-
                         echo "</a>";
-
-
-
                     }
                     echo "</div>";
-
-
                 } else {
                     echo "Không có sản phẩm nào.";
                 }
 
-                $conn->close();
-
-
+                // Đóng kết nối sau khi sử dụng
+                $conn = null;
                 ?>
+
 
 
             </div>

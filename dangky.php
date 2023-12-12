@@ -2,9 +2,7 @@
 
 include("./ConnectDB/database.php");
 
-// Xử lý đăng ký
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Lấy dữ liệu từ form
     $username = $_POST["username"];
     $password = $_POST["password"];
     $email = $_POST["email"];
@@ -13,42 +11,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phone = $_POST["phone"];
     $address = $_POST["address"];
 
-    // Bảo vệ chống SQL injection
-    $username = mysqli_real_escape_string($conn, $username);
-    $password = mysqli_real_escape_string($conn, $password);
-    $email = mysqli_real_escape_string($conn, $email);
-    $fullname = mysqli_real_escape_string($conn, $fullname);
-    $gender = mysqli_real_escape_string($conn, $gender);
-    $phone = mysqli_real_escape_string($conn, $phone);
-    $address = mysqli_real_escape_string($conn, $address);
+    $username = htmlspecialchars($username);
+    $password = htmlspecialchars($password);
+    $email = htmlspecialchars($email);
+    $fullname = htmlspecialchars($fullname);
+    $gender = htmlspecialchars($gender);
+    $phone = htmlspecialchars($phone);
+    $address = htmlspecialchars($address);
 
-    // Kiểm tra xem người dùng đã tồn tại chưa
-    $check_query = "SELECT * FROM users WHERE username='$username' OR email='$email'";
-    $check_result = $conn->query($check_query);
+    try {
+        // Kiểm tra xem người dùng đã tồn tại hay chưa
+        $check_query = "SELECT * FROM users WHERE username=:username OR email=:email";
+        $check_stmt = $conn->prepare($check_query);
+        $check_stmt->bindParam(':username', $username);
+        $check_stmt->bindParam(':email', $email);
+        $check_stmt->execute();
 
-    if ($check_result->num_rows > 0) {
-        // Người dùng đã tồn tại
-        $error_message = "Người dùng đã tồn tại. Vui lòng chọn username hoặc email khác.";
-    } else {
-        // Thêm người dùng mới vào cơ sở dữ liệu
-        $insert_query = "INSERT INTO users (username, password, email, fullname, gioitinh, phone, address) VALUES ('$username', '$password', '$email', '$fullname', '$gender', '$phone', '$address')";
-        if ($conn->query($insert_query) === TRUE) {
-            $error_message2 = "Đăng ký thành công";
-            echo "<script>
-     
-            setTimeout(function() {
-                window.location.href = 'login.php';
-            }, 1500); // 3000 milliseconds = 3 seconds
-          </script>";
+        if ($check_stmt->rowCount() > 0) {
+            $error_message = "Người dùng đã tồn tại. Vui lòng chọn username hoặc email khác.";
         } else {
-            $error_message2 = "Đăng ký thất bại. Vui lòng kiểm tra lại thông tin." . $conn->error;
+            // Thêm người dùng mới
+            $insert_query = "INSERT INTO users (username, password, email, fullname, gioitinh, phone, address) 
+                            VALUES (:username, :password, :email, :fullname, :gender, :phone, :address)";
+            $insert_stmt = $conn->prepare($insert_query);
+            $insert_stmt->bindParam(':username', $username);
+            $insert_stmt->bindParam(':password', $password);
+            $insert_stmt->bindParam(':email', $email);
+            $insert_stmt->bindParam(':fullname', $fullname);
+            $insert_stmt->bindParam(':gender', $gender);
+            $insert_stmt->bindParam(':phone', $phone);
+            $insert_stmt->bindParam(':address', $address);
+
+            if ($insert_stmt->execute()) {
+                $error_message2 = "Đăng ký thành công";
+                echo "<script>
+                    setTimeout(function() {
+                        window.location.href = 'login.php';
+                    }, 1500); 
+                </script>";
+            } else {
+                $error_message2 = "Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.";
+            }
         }
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
     }
 }
 
-// Đóng kết nối đến cơ sở dữ liệu
-
 ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -65,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-        </script>
+    </script>
     <link rel="stylesheet" href="css/fontAwesome.css">
     <link rel="stylesheet" href="css/hero-slider.css">
     <link rel="stylesheet" href="css/owl-carousel.css">

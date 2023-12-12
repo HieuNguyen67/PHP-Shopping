@@ -4,7 +4,6 @@ session_start();
 $loggedIn = false;
 $username1 = '';
 
-// Kiểm tra xem đã đăng nhập chưa
 if (isset($_SESSION['username'])) {
     $loggedIn = true;
     $username1 = $_SESSION['username'];
@@ -12,23 +11,19 @@ if (isset($_SESSION['username'])) {
 
 include("./ConnectDB/database.php");
 
-// Lấy ID người dùng từ session
 $user_id = $_SESSION["user_id"];
 
-// Truy vấn để lấy thông tin của người dùng từ cơ sở dữ liệu
-$select_query = "SELECT * FROM users WHERE id='$user_id'";
-$result = $conn->query($select_query);
+$select_query = "SELECT * FROM users WHERE id=:user_id";
+$stmt_select = $conn->prepare($select_query);
+$stmt_select->bindParam(':user_id', $user_id);
+$stmt_select->execute();
 
-// Kiểm tra xem có thông tin người dùng hay không
+$user_data = $stmt_select->fetch(PDO::FETCH_ASSOC);
 
-// Kiểm tra xem có kết quả hay không
-// Kiểm tra xem có kết quả hay không
-
-
-// Đóng kết nối đến cơ sở dữ liệu
-$conn->close();
-
+// Đóng kết nối sau khi sử dụng
+$conn = null;
 ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -45,7 +40,7 @@ $conn->close();
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-        </script>
+    </script>
     <link rel="stylesheet" href="css/fontAwesome.css">
     <link rel="stylesheet" href="css/hero-slider.css">
     <link rel="stylesheet" href="css/owl-carousel.css">
@@ -81,20 +76,20 @@ $conn->close();
 
                                 <li><a href="contact.php">Contact Us</a></li>
                                 <?php if ($loggedIn): ?>
-                                    <li><a href="checkout.php">Giỏ hàng</a></li>
-                                    <li><a href="UserInfo.php">Xin chào,
-                                            <?php echo $username1; ?>
-                                        </a></li>
-                                    <li><a href="index.php?logout=true">
-                                            <form class="dropdown-item" action="logout.php" method="post">
-                                                <input type="submit" value="Đăng xuất"
-                                                    style="border: none; background-color: transparent ;">
+                                <li><a href="checkout.php">Giỏ hàng</a></li>
+                                <li><a href="UserInfo.php">Xin chào,
+                                        <?php echo $username1; ?>
+                                    </a></li>
+                                <li><a href="index.php?logout=true">
+                                        <form class="dropdown-item" action="logout.php" method="post">
+                                            <input type="submit" value="Đăng xuất"
+                                                style="border: none; background-color: transparent ;">
 
-                                            </form>
-                                        </a></li>
+                                        </form>
+                                    </a></li>
                                 <?php else: ?>
-                                    <li><a href="./login.php">Đăng nhập</a></li>
-                                    <li><a href="./dangky.php">Đăng ký</a></li>
+                                <li><a href="./login.php">Đăng nhập</a></li>
+                                <li><a href="./dangky.php">Đăng ký</a></li>
                                 <?php endif; ?>
                             </ul>
                         </nav><!-- / #primary-nav -->
@@ -127,37 +122,29 @@ $conn->close();
 
             <tbody>
                 <?php
-                // Hiển thị dữ liệu từ cơ sở dữ liệu trong bảng HTML
-                
-                if ($result->num_rows > 0) {
-                    // Lặp qua các hàng kết quả và hiển thị thông tin
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<div class='row d-flex flex-row'>";
-                        echo "<div class='col col-5'>";
-                        echo "<h2  class='text-secondary fw-bold'>Họ và tên: <span class='text-primary fw-normal'>" . $row['fullname'] . "</span></h2><br><hr>";
-                        echo "<h2  class='text-secondary fw-bold'>Email: <span class='text-primary fw-normal'>" . $row['email'] . "</span></h2><br><hr>";
-                        echo "<h2  class='text-secondary fw-bold'>Giới tính: <span class='text-primary fw-normal'>" . $row['gioitinh'] . "</span></h2><br><hr>";
-                        echo "</div>";
-                        echo "<div class='col col-5'>";
-                        echo "<h2  class='text-secondary fw-bold'>Số điện thoại: <span class='text-primary fw-normal'>" . $row['phone'] . "</span></h2><br><hr>";
-                        echo "<h2  class='text-secondary fw-bold'>Tên đăng nhập: <span class='text-primary fw-normal'>" . $row['username'] . "</span></h2><br><hr>";
-                        echo "<h2  class='text-secondary fw-bold'>Địa chỉ: <span class='text-primary fw-normal'>" . $row['address'] . "</span></h2><br><hr>";
-                        echo "</div>";
-                        echo "<div class='col-2'>";
-                        echo "<a href='UserEdit.php?id=" . $row['id'] . "'>
-                        <button type=' submit' name='update_user' class='btn btn-primary col-12 pt-3 pb-3'>
+        if ($user_data) {
+            echo "<div class='row d-flex flex-row'>";
+            echo "<div class='col col-5'>";
+            echo "<h2  class='text-secondary fw-bold'>Họ và tên: <span class='text-primary fw-normal'>" . $user_data['fullname'] . "</span></h2><br><hr>";
+            echo "<h2  class='text-secondary fw-bold'>Email: <span class='text-primary fw-normal'>" . $user_data['email'] . "</span></h2><br><hr>";
+            echo "<h2  class='text-secondary fw-bold'>Giới tính: <span class='text-primary fw-normal'>" . $user_data['gioitinh'] . "</span></h2><br><hr>";
+            echo "</div>";
+            echo "<div class='col col-5'>";
+            echo "<h2  class='text-secondary fw-bold'>Số điện thoại: <span class='text-primary fw-normal'>" . $user_data['phone'] . "</span></h2><br><hr>";
+            echo "<h2  class='text-secondary fw-bold'>Tên đăng nhập: <span class='text-primary fw-normal'>" . $user_data['username'] . "</span></h2><br><hr>";
+            echo "<h2  class='text-secondary fw-bold'>Địa chỉ: <span class='text-primary fw-normal'>" . $user_data['address'] . "</span></h2><br><hr>";
+            echo "</div>";
+            echo "<div class='col-2'>";
+            echo "<a href='UserEdit.php?id=" . $user_data['id'] . "'>
+                        <button type='submit' name='update_user' class='btn btn-primary col-12 pt-3 pb-3'>
                             <h2>Sửa hồ sơ</h2>
                         </button></a>";
-                        echo "</div>";
-
-
-                        echo "</div>";
-
-                    }
-                } else {
-                    echo "Không tìm thấy thông tin khách hàng.";
-                }
-                ?>
+            echo "</div>";
+            echo "</div>";
+        } else {
+            echo "Không tìm thấy thông tin khách hàng.";
+        }
+        ?>
 
 
 

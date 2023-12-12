@@ -2,8 +2,8 @@
 session_start();
 
 
-// Giữ lại các biến session bạn muốn giữ
-$keep_variables = array('admin_id', 'adminname'); // Thêm các biến session bạn muốn giữ lại
+
+$keep_variables = array('admin_id', 'adminname'); 
 
 foreach ($_SESSION as $key => $value) {
     if (!in_array($key, $keep_variables)) {
@@ -11,7 +11,7 @@ foreach ($_SESSION as $key => $value) {
     }
 }
 
-// Chuyển hướng đến trang đăng nhập
+
 header("Location: index.php");
 exit();
 ?>

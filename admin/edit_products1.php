@@ -31,69 +31,71 @@
 <body>
 
     <?php
-    // Kết nối đến cơ sở dữ liệu
-    include("../ConnectDB/database.php");
+// Kết nối đến cơ sở dữ liệu
+include("../ConnectDB/database.php");
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Xử lý thông tin được gửi từ biểu mẫu sửa sản phẩm
-        $productID = $_POST['productID'];
-       
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-        // Xử lý tệp ảnh được tải lên
-        $targetDir = "../img/";
-        $targetFiles = array();
+    $productID = $_POST['productID'];
 
-        // Lặp qua mảng tệp được tải lên
-        foreach ($_FILES['anhSanPham']['tmp_name'] as $key => $tmp_name) {
-            $fileName = basename($_FILES["anhSanPham"]["name"][$key]);
-            $targetFile = $targetDir . $fileName;
 
-            // Kiểm tra xem tệp ảnh có hợp lệ không
-            $check = getimagesize($_FILES["anhSanPham"]["tmp_name"][$key]);
-            if ($check !== false) {
-              
-                move_uploaded_file($_FILES["anhSanPham"]["tmp_name"][$key], $targetFile);
-                $targetFiles[] =  $targetFile;
-            } else {
-                echo "File không phải là ảnh.<br>";
-            }
+    $targetDir = "../img/";
+    $targetFiles = array();
+
+
+    foreach ($_FILES['anhSanPham']['tmp_name'] as $key => $tmp_name) {
+        $fileName = basename($_FILES["anhSanPham"]["name"][$key]);
+        $targetFile = $targetDir . $fileName;
+
+
+        $check = getimagesize($_FILES["anhSanPham"]["tmp_name"][$key]);
+        if ($check !== false) {
+
+            move_uploaded_file($_FILES["anhSanPham"]["tmp_name"][$key], $targetFile);
+            $targetFiles[] = $targetFile;
+        } else {
+            echo "File không phải là ảnh.<br>";
         }
+    }
 
-        // Chuỗi đường dẫn của ảnh thành một chuỗi dạng 'path1;path2;path3'
-        $targetFilesString = implode(";", $targetFiles);
 
-        // Cập nhật thông tin sản phẩm vào cơ sở dữ liệu
-        $sql = "UPDATE products SET image='$targetFilesString' WHERE id=$productID";
+    $targetFilesString = implode(";", $targetFiles);
 
-        if ($conn->query($sql) === TRUE) {
-            echo "Cập nhật sản phẩm thành công.";
-            echo "<script>
+
+    $sql = "UPDATE products SET image=:targetFilesString WHERE id=:productID";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':targetFilesString', $targetFilesString);
+    $stmt->bindParam(':productID', $productID);
+
+    if ($stmt->execute()) {
+        echo "Cập nhật sản phẩm thành công.";
+        echo "<script>
      
             setTimeout(function() {
                 window.location.href = 'edit_products.php?id=$productID';
             }, 1500); // 3000 milliseconds = 3 seconds
           </script>";
-        } else {
-            echo "Lỗi: " . $sql . "<br>" . $conn->error;
-        }
+    } else {
+        echo "Lỗi: " . $stmt->errorInfo()[2];
     }
+}
 
-    // Lấy ID sản phẩm từ tham số URL
-    if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-        $productID = $_GET['id'];
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $productID = $_GET['id'];
 
-        // Truy vấn SQL để lấy thông tin sản phẩm từ bảng Products dựa trên ProductID
-        $sql = "SELECT * FROM products WHERE id = $productID";
-        $result = $conn->query($sql);
 
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
+    $sql = "SELECT * FROM products WHERE id = :productID";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':productID', $productID);
+    $stmt->execute();
 
-            // Hiển thị biểu mẫu sửa sản phẩm
-            ?>
+    if ($stmt->rowCount() > 0) {
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+        ?>
     <form method="post" enctype="multipart/form-data">
         <input type="hidden" name="productID" value="<?php echo $row['id']; ?>">
-
 
         <label for="anhSanPham">Ảnh sản phẩm:</label>
         <input type="file" name="anhSanPham[]" accept="image/*" multiple>
@@ -101,15 +103,16 @@
         <button type="submit">Lưu thay đổi</button>
     </form>
     <?php
-        } else {
-            echo "Không tìm thấy sản phẩm.";
-        }
     } else {
-        echo "ID sản phẩm không hợp lệ.";
+        echo "Không tìm thấy sản phẩm.";
     }
+} else {
+    echo "ID sản phẩm không hợp lệ.";
+}
 
-    $conn->close();
-    ?>
+    $conn = null;
+?>
+
 
 </body>
 

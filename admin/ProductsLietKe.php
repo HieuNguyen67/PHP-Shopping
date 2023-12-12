@@ -1,25 +1,30 @@
 <?php
 include("./checklogin.php");
-// Kết nối đến cơ sở dữ liệu
+
 include("../ConnectDB/database.php");
 
-// Xử lý khi người dùng nhấn nút Xoá
 if (isset($_POST['delete_products'])) {
     $products_id = $_POST['delete_products'];
 
-    // Thực hiện truy vấn để xoá người dùng
-    $delete_query = "DELETE FROM products WHERE id = '$products_id'";
-    if ($conn->query($delete_query) === TRUE) {
-       $message_delete= "Sản phẩm đã được xoá thành công.";
+    $delete_query = "DELETE FROM products WHERE id = :products_id";
+    $stmt = $conn->prepare($delete_query);
+    $stmt->bindParam(':products_id', $products_id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        $message_delete = "Sản phẩm đã được xoá thành công.";
     } else {
-        echo "Lỗi xoá sản phẩm: " . $conn->error;
+        echo "Lỗi xoá sản phẩm: " . $stmt->errorInfo()[2];
     }
 }
 
-// Truy vấn để lấy danh sách người dùng
 $select_query = "SELECT * FROM products";
-$result = $conn->query($select_query);
+$result = $conn->prepare($select_query);
+$result->execute();
+
+
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -125,33 +130,32 @@ $result = $conn->query($select_query);
 
                                 <tbody>
                                     <?php
-                                    // Hiển thị dữ liệu từ cơ sở dữ liệu trong bảng HTML
-                                    $id1 = 1;
-                                    while ($row = $result->fetch_assoc()) {
-                                        echo "<tr>";
-                                        echo "<td style='font-weight: bold;' class='text-dark'>" . $id1++ . "</td>";
-                                        echo "<td  style='font-weight: bold;' class='text-dark'>" . $row['tensanpham'] . "</td>";
-                                        echo "<td style='font-weight: bold;' class='text-dark '>" . $row['mota'] . "</td>";
-                                        echo "<td style='font-weight: bold;' class='text-danger '>" . $row['gia'] . "</td>";
-                                        echo "<td style='font-weight: bold;' class='text-dark '>" . $row['soluong'] . "</td>";
-                                        $images = explode(';', $row['image']);
-                                        echo "<td>" ;
-                                        foreach ($images as $image) {
-                                            echo "<img src='" . $image . "' alt='Ảnh sản phẩm' class='hinhanh'>";
-                                        }
-                                      
-                                        echo "</td>";
-                                        echo "<td><a href='edit_products.php?id=" . $row['id'] . "'><button type='submit' class='btn btn-warning col-12'>Sửa</button></a></td>";
-                                        // Nút Xoá
-                                        echo "<td>
-                    <form method='post' action=''>
-                        <input type='hidden' name='delete_products' value='" . $row['id'] . "'>
-                         <button type='submit' class='btn btn-danger   col-12'>Xoá</button>
-                    </form>
-                </td>";
-                                        echo "</tr>";
+                                $id1 = 1;
+                                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                                    echo "<tr>";
+                                    echo "<td style='font-weight: bold;' class='text-dark'>" . $id1++ . "</td>";
+                                    echo "<td  style='font-weight: bold;' class='text-dark'>" . $row['tensanpham'] . "</td>";
+                                    echo "<td style='font-weight: bold;' class='text-dark '>" . $row['mota'] . "</td>";
+                                    echo "<td style='font-weight: bold;' class='text-danger '>" . $row['gia'] . "</td>";
+                                    echo "<td style='font-weight: bold;' class='text-dark '>" . $row['soluong'] . "</td>";
+                                    $images = explode(';', $row['image']);
+                                    echo "<td>";
+                                    foreach ($images as $image) {
+                                        echo "<img src='" . $image . "' alt='Ảnh sản phẩm' class='hinhanh'>";
                                     }
-                                    ?>
+                                    echo "</td>";
+                                    echo "<td><a href='edit_products.php?id=" . $row['id'] . "'><button type='submit' class='btn btn-warning col-12'>Sửa</button></a></td>";
+                                    // Nút Xoá
+                                    echo "<td>
+                                    <form method='post' action=''>
+                                        <input type='hidden' name='delete_products' value='" . $row['id'] . "'>
+                                        <button type='submit' class='btn btn-danger col-12'>Xoá</button>
+                                    </form>
+                                    </td>";
+                                    echo "</tr>";
+                                }
+                                ?>
+
 
 
                                 </tbody>

@@ -1,4 +1,5 @@
 <?php
+
 include("./checklogin.php");
 
 ?>
@@ -67,53 +68,61 @@ include("./checklogin.php");
                 <div class="container">
 
                     <?php
-                // Kết nối đến cơ sở dữ liệu
-                include("../ConnectDB/database.php");
+include("../ConnectDB/database.php");
 
-                if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                    // Xử lý thông tin được gửi từ biểu mẫu thêm mới sản phẩm
-                    $tenSanPham = $_POST['tenSanPham'];
-                    $moTa = $_POST['moTa'];
-                    $gia = $_POST['gia'];
-                    $soLuong = $_POST['soLuong'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-                    // Xử lý tệp ảnh được tải lên
-                    $targetDir = "../img/";
-                    $targetFiles = array();
+    $tenSanPham = $_POST['tenSanPham'];
+    $moTa = $_POST['moTa'];
+    $gia = $_POST['gia'];
+    $soLuong = $_POST['soLuong'];
 
-                    foreach ($_FILES['anhSanPham']['tmp_name'] as $key => $tmp_name) {
-                        $fileName = basename($_FILES["anhSanPham"]["name"][$key]);
-                        $targetFile = $targetDir . $fileName;
 
-                        // Kiểm tra xem tệp ảnh có hợp lệ không
-                        $check = getimagesize($_FILES["anhSanPham"]["tmp_name"][$key]);
-                        if ($check !== false) {
-                            echo "File là ảnh - " . $check["mime"] . ".<br>";
-                            move_uploaded_file($_FILES["anhSanPham"]["tmp_name"][$key], $targetFile);
-                            $targetFiles[] = $targetFile;
-                        } else {
-                            echo "File không phải là ảnh.<br>";
-                        }
-                    }
+    $targetDir = "../img/";
+    $targetFiles = array();
 
-                    // Chuỗi đường dẫn của ảnh thành một chuỗi dạng 'path1;path2;path3'
-                    $anhSanPham = implode(";", $targetFiles);
+    foreach ($_FILES['anhSanPham']['tmp_name'] as $key => $tmp_name) {
+        $fileName = basename($_FILES["anhSanPham"]["name"][$key]);
+        $targetFile = $targetDir . $fileName;
 
-                    // Thêm thông tin sản phẩm vào cơ sở dữ liệu
-                    $sql = "INSERT INTO products (tensanpham, mota, gia, soluong, image) VALUES ('$tenSanPham', '$moTa', $gia, $soLuong, '$anhSanPham')";
 
-                    if ($conn->query($sql) === TRUE) {
-                        echo "<h3 class='text-danger'>Thêm mới sản phẩm thành công. Đang chuyển hướng...</h3>";
-                        echo '<script>
-                setTimeout(function() {
-                    window.location.href = "ProductsLietKe.php";
-                }, 3000);
-              </script>';
-                    } else {
-                        echo "Lỗi: " . $sql . "<br>" . $conn->error;
-                    }
-                }
-                ?>
+        $check = getimagesize($_FILES["anhSanPham"]["tmp_name"][$key]);
+        if ($check !== false) {
+          
+            move_uploaded_file($_FILES["anhSanPham"]["tmp_name"][$key], $targetFile);
+            $targetFiles[] = $targetFile;
+        } else {
+            echo "File không phải là ảnh.<br>";
+        }
+    }
+
+
+    $anhSanPham = implode(";", $targetFiles);
+
+
+    $sql = "INSERT INTO products (tensanpham, mota, gia, soluong, image) VALUES (:tenSanPham, :moTa, :gia, :soLuong, :anhSanPham)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':tenSanPham', $tenSanPham);
+    $stmt->bindParam(':moTa', $moTa);
+    $stmt->bindParam(':gia', $gia);
+    $stmt->bindParam(':soLuong', $soLuong);
+    $stmt->bindParam(':anhSanPham', $anhSanPham);
+    if ($stmt->execute()) {
+        echo "<h3 class='text-danger'>Thêm mới sản phẩm thành công. Đang chuyển hướng...</h3>";
+        echo '<script>
+            setTimeout(function() {
+                window.location.href = "ProductsLietKe.php";
+            }, 3000);
+          </script>';
+    } else {
+        echo "Lỗi: " . $stmt->errorInfo();
+    }
+
+    $stmt=null;
+    $conn=null;
+}
+?>
+
                     <form class="mt-1 " method="post" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="tenSanPham" class="form-label fs-2">Tên sản phẩm</label>

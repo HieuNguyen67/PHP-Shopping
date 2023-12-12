@@ -1,9 +1,8 @@
 <?php
 include("./checklogin.php");
-// Thông tin kết nối đến cơ sở dữ liệu
+
 include("../ConnectDB/database.php");
 
-// Xử lý khi người dùng nhấn nút Cập nhật
 if (isset($_POST['update_user'])) {
     $user_id = $_POST['user_id'];
     $new_username = $_POST['new_username'];
@@ -13,33 +12,37 @@ if (isset($_POST['update_user'])) {
     $new_phone = $_POST['new_phone'];
     $new_address = $_POST['new_address'];
 
-    // Thực hiện truy vấn để cập nhật thông tin người dùng
-    $update_query = "UPDATE users SET username='$new_username', email='$new_email', fullname='$new_fullname', gioitinh='$new_gender' , phone='$new_phone', address='$new_address' WHERE id = '$user_id'";
+    $update_query = "UPDATE users SET username=:new_username, email=:new_email, fullname=:new_fullname, gioitinh=:new_gender, phone=:new_phone, address=:new_address WHERE id = :user_id";
+    $stmt = $conn->prepare($update_query);
+    $stmt->bindParam(':new_username', $new_username);
+    $stmt->bindParam(':new_email', $new_email);
+    $stmt->bindParam(':new_fullname', $new_fullname);
+    $stmt->bindParam(':new_gender', $new_gender);
+    $stmt->bindParam(':new_phone', $new_phone);
+    $stmt->bindParam(':new_address', $new_address);
+    $stmt->bindParam(':user_id', $user_id);
 
-    if ($conn->query($update_query) === TRUE) {
-        $message= "Thông tin người dùng đã được cập nhật thành công.";
+    if ($stmt->execute()) {
+        $message = "Thông tin người dùng đã được cập nhật thành công.";
         echo "<script>
-     
             setTimeout(function() {
                 window.location.href = 'UserLietKe.php';
             }, 1500); // 3000 milliseconds = 3 seconds
           </script>";
     } else {
-        echo "Lỗi cập nhật thông tin người dùng: " . $conn->error;
+        echo "Lỗi cập nhật thông tin người dùng: " . $stmt->errorInfo()[2];
     }
 }
 
-// Lấy ID người dùng từ tham số URL
 $user_id = $_GET['id'];
 
-// Truy vấn để lấy thông tin người dùng cần sửa
-$select_query = "SELECT * FROM users WHERE id='$user_id'";
-$result = $conn->query($select_query);
+$select_query = "SELECT * FROM users WHERE id=:user_id";
+$stmt = $conn->prepare($select_query);
+$stmt->bindParam(':user_id', $user_id);
+$stmt->execute();
 
-// Lấy dữ liệu người dùng hiện tại
-$user_data = $result->fetch_assoc();
+$user_data = $stmt->fetch(PDO::FETCH_ASSOC);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -211,5 +214,5 @@ $user_data = $result->fetch_assoc();
 
 <?php
 // Đóng kết nối đến cơ sở dữ liệu
-$conn->close();
+$conn = null;
 ?>

@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Kiểm tra nếu đã đăng nhập, chuyển hướng đến trang chính
 if (isset($_SESSION["admin_id"])) {
     header("Location: admin.php");
     exit();
@@ -9,35 +8,31 @@ if (isset($_SESSION["admin_id"])) {
 
 include("../ConnectDB/database.php");
 
-// Xử lý đăng nhập
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $identifier = $_POST["identifier"]; // Có thể là username hoặc email
+    $identifier = $_POST["identifier"];
     $password = $_POST["password"];
 
-    // Bảo vệ chống SQL injection
-    $identifier = mysqli_real_escape_string($conn, $identifier);
-    $password = mysqli_real_escape_string($conn, $password);
+    $identifier = htmlspecialchars($identifier);
+    $password = htmlspecialchars($password);
 
-    // Truy vấn kiểm tra đăng nhập
-    $query = "SELECT * FROM admins WHERE (username='$identifier' OR email='$identifier') AND password='$password'";
-    $result = $conn->query($query);
+    $query = "SELECT * FROM admins WHERE (username=:identifier OR email=:identifier) AND password=:password";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':identifier', $identifier);
+    $stmt->bindParam(':password', $password);
+    $stmt->execute();
 
-    // Kiểm tra kết quả truy vấn
-    if ($result->num_rows > 0) {
-        // Đăng nhập thành công
-        $user = $result->fetch_assoc();
+    if ($stmt->rowCount() > 0) {
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
         $_SESSION["admin_id"] = $user["id"];
         $_SESSION["adminname"] = $user["username"];
         header("Location: admin.php");
         exit();
     } else {
-        // Đăng nhập thất bại
         $error_message = "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.";
     }
 }
 
-// Đóng kết nối đến cơ sở dữ liệu
-$conn->close();
+$conn = null; // Đóng kết nối đến cơ sở dữ liệu
 ?>
 <!DOCTYPE html>
 <html lang="en">

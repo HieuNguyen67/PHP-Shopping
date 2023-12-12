@@ -1,11 +1,11 @@
 <?php
 include("./checklogin.php");
-// Thông tin kết nối đến cơ sở dữ liệu
+
+// Include the PDO connection file
 include("../ConnectDB/database.php");
 
-// Xử lý đăng ký
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Lấy dữ liệu từ form
+
     $username = $_POST["username"];
     $password = $_POST["password"];
     $email = $_POST["email"];
@@ -14,42 +14,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phone = $_POST["phone"];
     $address = $_POST["address"];
 
-    // Bảo vệ chống SQL injection
-    $username = mysqli_real_escape_string($conn, $username);
-    $password = mysqli_real_escape_string($conn, $password);
-    $email = mysqli_real_escape_string($conn, $email);
-    $fullname = mysqli_real_escape_string($conn, $fullname);
-    $gender = mysqli_real_escape_string($conn, $gender);
-    $phone = mysqli_real_escape_string($conn, $phone);
-    $address = mysqli_real_escape_string($conn, $address);
+    
+    // Using prepared statements to prevent SQL injection
+    
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username=:username OR email=:email");
+    $stmt->bindParam(':username', $username);
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
 
-    // Kiểm tra xem người dùng đã tồn tại chưa
-    $check_query = "SELECT * FROM users WHERE username='$username' OR email='$email'";
-    $check_result = $conn->query($check_query);
-
-    if ($check_result->num_rows > 0) {
-        // Người dùng đã tồn tại
+    if ($stmt->rowCount() > 0) {
         $error_message = "Người dùng đã tồn tại. Vui lòng chọn username hoặc email khác.";
     } else {
-        // Thêm người dùng mới vào cơ sở dữ liệu
-        $insert_query = "INSERT INTO users (username, password, email, fullname, gioitinh, phone, address ) VALUES ('$username', '$password', '$email', '$fullname', '$gender', '$phone', '$address')";
-        if ($conn->query($insert_query) === TRUE) {
+        $stmt = $conn->prepare("INSERT INTO users (username, password, email, fullname, gioitinh, phone, address) VALUES (:username, :password, :email, :fullname, :gender, :phone, :address)");
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':password', $password);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':fullname', $fullname);
+        $stmt->bindParam(':gender', $gender);
+        $stmt->bindParam(':phone', $phone);
+        $stmt->bindParam(':address', $address);
+
+        if ($stmt->execute()) {
             $error_message1 = "Thêm thành công .";
-      
+
             echo "<script>
-     
-            setTimeout(function() {
-                window.location.href = 'UserLietKe.php';
-            }, 1500); // 3000 milliseconds = 3 seconds
-          </script>";
+                setTimeout(function() {
+                    window.location.href = 'UserLietKe.php';
+                }, 1500); // 3000 milliseconds = 3 seconds
+            </script>";
         } else {
-           $error_message2 = "Thêm thất bại. Vui lòng kiểm tra lại thông tin." . $conn->error;
+            $error_message2 = "Thêm thất bại. Vui lòng kiểm tra lại thông tin." . $stmt->errorInfo();
         }
     }
 }
 
-// Đóng kết nối đến cơ sở dữ liệu
-$conn->close();
+// Close the PDO connection
+$conn = null;
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -4,7 +4,6 @@ session_start();
 $loggedIn = false;
 $username1 = '';
 
-// Kiểm tra xem đã đăng nhập chưa
 if (isset($_SESSION['username'])) {
     $loggedIn = true;
     $username1 = $_SESSION['username'];
@@ -12,7 +11,6 @@ if (isset($_SESSION['username'])) {
 
 include("./ConnectDB/database.php");
 
-// Xử lý khi người dùng nhấn nút Cập nhật
 if (isset($_POST['update_user'])) {
     $user_id = $_POST['user_id'];
     $new_username = $_POST['new_username'];
@@ -22,31 +20,37 @@ if (isset($_POST['update_user'])) {
     $new_phone = $_POST['new_phone'];
     $new_address = $_POST['new_address'];
 
-    // Thực hiện truy vấn để cập nhật thông tin người dùng
-    $update_query = "UPDATE users SET username='$new_username', email='$new_email', fullname='$new_fullname', gioitinh='$new_gender' , phone='$new_phone', address='$new_address' WHERE id = '$user_id'";
+    $update_query = "UPDATE users SET username=:new_username, email=:new_email, fullname=:new_fullname, gioitinh=:new_gender, phone=:new_phone, address=:new_address WHERE id = :user_id";
 
-    if ($conn->query($update_query) === TRUE) {
+    $stmt = $conn->prepare($update_query);
+    $stmt->bindParam(':new_username', $new_username);
+    $stmt->bindParam(':new_email', $new_email);
+    $stmt->bindParam(':new_fullname', $new_fullname);
+    $stmt->bindParam(':new_gender', $new_gender);
+    $stmt->bindParam(':new_phone', $new_phone);
+    $stmt->bindParam(':new_address', $new_address);
+    $stmt->bindParam(':user_id', $user_id);
+
+    if ($stmt->execute()) {
         $message = "Thông tin người dùng đã được cập nhật thành công.";
         echo "<script>
-     
             setTimeout(function() {
                 window.location.href = 'UserInfo.php';
             }, 1500); // 3000 milliseconds = 3 seconds
           </script>";
     } else {
-        echo "Lỗi cập nhật thông tin người dùng: " . $conn->error;
+        echo "Lỗi cập nhật thông tin người dùng: " . $stmt->errorInfo()[2];
     }
 }
 
-// Lấy ID người dùng từ tham số URL
 $user_id = $_GET['id'];
 
-// Truy vấn để lấy thông tin người dùng cần sửa
-$select_query = "SELECT * FROM users WHERE id='$user_id'";
-$result = $conn->query($select_query);
+$select_query = "SELECT * FROM users WHERE id=:user_id";
+$stmt_select = $conn->prepare($select_query);
+$stmt_select->bindParam(':user_id', $user_id);
+$stmt_select->execute();
 
-// Lấy dữ liệu người dùng hiện tại
-$user_data = $result->fetch_assoc();
+$user_data = $stmt_select->fetch(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html>
@@ -64,7 +68,7 @@ $user_data = $result->fetch_assoc();
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-        </script>
+    </script>
     <link rel="stylesheet" href="css/fontAwesome.css">
     <link rel="stylesheet" href="css/hero-slider.css">
     <link rel="stylesheet" href="css/owl-carousel.css">
@@ -100,20 +104,20 @@ $user_data = $result->fetch_assoc();
 
                                 <li><a href="contact.php">Contact Us</a></li>
                                 <?php if ($loggedIn): ?>
-                                    <li><a href="checkout.php">Giỏ hàng</a></li>
-                                    <li><a href="UserInfo.php">Xin chào,
-                                            <?php echo $username1; ?>
-                                        </a></li>
-                                    <li><a href="index.php?logout=true">
-                                            <form class="dropdown-item" action="logout.php" method="post">
-                                                <input type="submit" value="Đăng xuất"
-                                                    style="border: none; background-color: transparent ;">
+                                <li><a href="checkout.php">Giỏ hàng</a></li>
+                                <li><a href="UserInfo.php">Xin chào,
+                                        <?php echo $username1; ?>
+                                    </a></li>
+                                <li><a href="index.php?logout=true">
+                                        <form class="dropdown-item" action="logout.php" method="post">
+                                            <input type="submit" value="Đăng xuất"
+                                                style="border: none; background-color: transparent ;">
 
-                                            </form>
-                                        </a></li>
+                                        </form>
+                                    </a></li>
                                 <?php else: ?>
-                                    <li><a href="./login.php">Đăng nhập</a></li>
-                                    <li><a href="./dangky.php">Đăng ký</a></li>
+                                <li><a href="./login.php">Đăng nhập</a></li>
+                                <li><a href="./dangky.php">Đăng ký</a></li>
                                 <?php endif; ?>
                             </ul>
                         </nav><!-- / #primary-nav -->

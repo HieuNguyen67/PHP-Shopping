@@ -36,19 +36,19 @@ if (isset($_SESSION['username'])) {
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-        </script>
+    </script>
     <style>
-        .product-card {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin: 10px;
-            text-align: center;
-        }
+    .product-card {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+        text-align: center;
+    }
 
-        .image {
-            width: 200px;
-            height: 200px;
-        }
+    .image {
+        width: 200px;
+        height: 200px;
+    }
     </style>
 </head>
 
@@ -77,20 +77,20 @@ if (isset($_SESSION['username'])) {
 
                                 <li><a href="contact.php">Contact Us</a></li>
                                 <?php if ($loggedIn): ?>
-                                    <li><a href="checkout.php">Giỏ hàng</a></li>
-                                    <li><a href="UserInfo.php">Xin chào,
-                                            <?php echo $username; ?>
-                                        </a></li>
-                                    <li><a href="index.php?logout=true">
-                                            <form class="dropdown-item" action="logout.php" method="post">
-                                                <input type="submit" value="Đăng xuất"
-                                                    style="border: none; background-color: transparent ;">
+                                <li><a href="checkout.php">Giỏ hàng</a></li>
+                                <li><a href="UserInfo.php">Xin chào,
+                                        <?php echo $username; ?>
+                                    </a></li>
+                                <li><a href="index.php?logout=true">
+                                        <form class="dropdown-item" action="logout.php" method="post">
+                                            <input type="submit" value="Đăng xuất"
+                                                style="border: none; background-color: transparent ;">
 
-                                            </form>
-                                        </a></li>
+                                        </form>
+                                    </a></li>
                                 <?php else: ?>
-                                    <li><a href="./login.php">Đăng nhập</a></li>
-                                    <li><a href="./dangky.php">Đăng ký</a></li>
+                                <li><a href="./login.php">Đăng nhập</a></li>
+                                <li><a href="./dangky.php">Đăng ký</a></li>
                                 <?php endif; ?>
                             </ul>
                         </nav><!-- / #primary-nav -->
@@ -119,45 +119,35 @@ if (isset($_SESSION['username'])) {
 
 
                 <?php
-                //Kết nối đến cơ sở dữ liệu
-                include("./ConnectDB/database.php");
+            include("./ConnectDB/database.php");
 
-                // Truy vấn SQL để lấy thông tin sản phẩm từ bảng Products
-                $sql = "SELECT id, tensanpham, gia, image FROM products";
-                $result = $conn->query($sql);
+            $sql = "SELECT id, tensanpham, gia, image FROM products";
+            $stmt = $conn->query($sql);
 
-                if ($result->num_rows > 0) {
-                    echo "<div class='row d-flex flex-row row-cols-3'>";
-                    // Hiển thị các Card sản phẩm
-                    while ($row = $result->fetch_assoc()) {
-
-                        $images = explode(';', $row['image']);
-                        echo "<a class='text-decoration-none' href='product_details.php?product_id=" . $row["id"] . "'>";
-                        echo "<div class='col product-card shadow rounded'>";
-                        echo "<img src='./img/" . $images[0] . "' alt='Ảnh sản phẩm' class='image'><br><br>";
-                        echo "<h1 class='text-dark'>" . $row['tensanpham'] . "</h1>";
-                        $formatted_price = number_format($row["gia"], 0, ',', '.') . "";
-                        echo "<h3 class='text-secondary' >Giá: " . $formatted_price . "&nbsp;VNĐ</h3>";
-                        echo "<hr>";
-                        echo "<h3 class='text-warning'>XEM SẢN PHẨM</h3>";
-                        echo "</div>";
-
-                        echo "</a>";
-
-
-
-                    }
+            if ($stmt->rowCount() > 0) {
+                echo "<div class='row d-flex flex-row row-cols-3'>";
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $images = explode(';', $row['image']);
+                    echo "<a class='text-decoration-none' href='product_details.php?product_id=" . $row["id"] . "'>";
+                    echo "<div class='col product-card shadow rounded'>";
+                    echo "<img src='./img/" . $images[0] . "' alt='Ảnh sản phẩm' class='image'><br><br>";
+                    echo "<h1 class='text-dark'>" . $row['tensanpham'] . "</h1>";
+                    $formatted_price = number_format($row["gia"], 0, ',', '.') . "";
+                    echo "<h3 class='text-secondary' >Giá: " . $formatted_price . "&nbsp;VNĐ</h3>";
+                    echo "<hr>";
+                    echo "<h3 class='text-warning'>XEM SẢN PHẨM</h3>";
                     echo "</div>";
-
-
-                } else {
-                    echo "Không có sản phẩm nào.";
+                    echo "</a>";
                 }
+                echo "</div>";
+            } else {
+                echo "Không có sản phẩm nào.";
+            }
 
-                $conn->close();
+            // Đóng kết nối sau khi sử dụng
+            $conn = null;
+            ?>
 
-
-                ?>
 
 
 
@@ -231,7 +221,7 @@ if (isset($_SESSION['username'])) {
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript"></script>
     <script>
-        window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')
+    window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')
     </script>
 
     <script src="js/vendor/bootstrap.min.js"></script>
