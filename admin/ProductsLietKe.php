@@ -100,7 +100,7 @@ $result->execute();
 
 
                     <!-- Page Heading -->
-                    <h2>Danh sách người dùng</h2>
+                    <h2>Danh sách sản phẩm</h2>
 
                     <div class="card-body">
                         <div class="table-responsive">

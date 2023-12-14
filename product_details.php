@@ -185,8 +185,9 @@ if (isset($_SESSION['username'])) {
                             echo "<p style='font-size:30px;' class='text-danger fw-bold'> " . $formatted_price . "&nbsp;VNĐ</p><br>";
 
                             echo "<form method='post' action='product_details.php?product_id=$product_id'>";
+                            echo "<p  style='font-size:15px;' class='text-dark fw-bold'>Số lượng trong kho: " . $row["soluong"] . "</p> ";
                             echo "<label for='quantity' class='fs-3'>Số lượng: &ensp; </label>";
-                            echo "<input type='number' name='quantity' value='1' min='1' required class='fs-3'><br><br>";
+                            echo "<input type='number' name='quantity' value='1' min='1' max='{$row["soluong"]}' required class='fs-3'><br><br>";
                             echo "<input type='submit' name='add_to_cart' value='Thêm vào giỏ hàng' class='btn btn-primary p-4 fs-3'>";
                             echo "</form>";
                             echo "</div>";
@@ -197,7 +198,7 @@ if (isset($_SESSION['username'])) {
                             echo "Sản phẩm không tồn tại.";
                         }
 
-                        // Đóng kết nối sau khi sử dụng
+                       
                         $conn = null;
                     } else {
                         echo "Thiếu tham số product_id trong URL.";

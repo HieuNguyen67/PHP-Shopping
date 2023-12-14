@@ -4,7 +4,7 @@ session_start();
 $loggedIn = false;
 $username = '';
 
-// Kiểm tra xem đã đăng nhập chưa
+
 if (isset($_SESSION['username'])) {
     $loggedIn = true;
     $username = $_SESSION['username'];
@@ -122,7 +122,10 @@ if (isset($_SESSION['username'])) {
             include("./ConnectDB/database.php");
 
             $sql = "SELECT id, tensanpham, gia, image FROM products";
-            $stmt = $conn->query($sql);
+          
+                $stmt = $conn->prepare($sql);
+             
+                $stmt->execute();
 
             if ($stmt->rowCount() > 0) {
                 echo "<div class='row d-flex flex-row row-cols-3'>";
@@ -144,7 +147,6 @@ if (isset($_SESSION['username'])) {
                 echo "Không có sản phẩm nào.";
             }
 
-            // Đóng kết nối sau khi sử dụng
             $conn = null;
             ?>
 

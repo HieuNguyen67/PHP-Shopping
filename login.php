@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$conn = null; // Đóng kết nối sau khi sử dụng
+$conn = null; 
 ?>
 
 <!DOCTYPE html>

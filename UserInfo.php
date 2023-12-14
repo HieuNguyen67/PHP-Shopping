@@ -20,7 +20,7 @@ $stmt_select->execute();
 
 $user_data = $stmt_select->fetch(PDO::FETCH_ASSOC);
 
-// Đóng kết nối sau khi sử dụng
+
 $conn = null;
 ?>
 

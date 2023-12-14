@@ -202,28 +202,21 @@ if (isset($_SESSION['username'])) {
                             echo "<p>Không có sản phẩm trong giỏ hàng.</p>";
                         }
 
-                        // Đóng kết nối sau khi sử dụng
-                        $conn = null;
-
-                        // Chức năng đặt hàng
+                       
+ 
+                    
                         echo "<div class='row d-flex flex-row'>";
                         echo "<div class='col col-8'>";
-
                         echo "</div>";
-
                         echo "<div class='col '>";
                         if (isset($total_all)) {
                             echo "<h1 class='text-dark ms-4 fw-bold'>Tổng tiền : " . number_format($total_all, 0, ',', '.') . "&nbsp;VNĐ</h1>";
                         }
-
                         echo "</div>";
                         echo "</div><br><br><br>";
-
                         echo "<div class='row d-flex flex-row'>";
                         echo "<div class='col col-8'>";
-
                         echo "</div>";
-
                         echo "<div class='col '>";
                         echo "<form method='post' action='place_order.php'>";
                         echo "<button type='submit' class='btn btn-dark p-4 fs-3 col-10'>Đặt hàng</button>";

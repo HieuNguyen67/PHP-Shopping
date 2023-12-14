@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $address = htmlspecialchars($address);
 
     try {
-        // Kiểm tra xem người dùng đã tồn tại hay chưa
+      
         $check_query = "SELECT * FROM users WHERE username=:username OR email=:email";
         $check_stmt = $conn->prepare($check_query);
         $check_stmt->bindParam(':username', $username);
@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($check_stmt->rowCount() > 0) {
             $error_message = "Người dùng đã tồn tại. Vui lòng chọn username hoặc email khác.";
         } else {
-            // Thêm người dùng mới
+      
             $insert_query = "INSERT INTO users (username, password, email, fullname, gioitinh, phone, address) 
                             VALUES (:username, :password, :email, :fullname, :gender, :phone, :address)";
             $insert_stmt = $conn->prepare($insert_query);

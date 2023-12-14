@@ -154,37 +154,40 @@ if (isset($_SESSION['username'])) {
                         </div>
                     </div>
                 </div>
+
                 <?php
-                include("./ConnectDB/database.php");
+            include("./ConnectDB/database.php");
 
-                $sql = "SELECT id, tensanpham, gia, image FROM products";
+            $sql = "SELECT id, tensanpham, gia, image FROM products";
+          
                 $stmt = $conn->prepare($sql);
+             
                 $stmt->execute();
-                $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                if (count($products) > 0) {
-                    echo "<div class='row d-flex flex-row row-cols-3'>";
-                    foreach ($products as $row) {
-                        $images = explode(';', $row['image']);
-                        echo "<a class='text-decoration-none' href='product_details.php?product_id=" . $row["id"] . "'>";
-                        echo "<div class='col product-card shadow rounded'>";
-                        echo "<img src='./img/" . $images[0] . "' alt='Ảnh sản phẩm' class='image'><br><br>";
-                        echo "<h1 class='text-dark'>" . $row['tensanpham'] . "</h1>";
-                        $formatted_price = number_format($row["gia"], 0, ',', '.') . "";
-                        echo "<h3 class='text-secondary' >Giá: " . $formatted_price . "&nbsp;VNĐ</h3>";
-                        echo "<hr>";
-                        echo "<h3 class='text-warning'>XEM SẢN PHẨM</h3>";
-                        echo "</div>";
-                        echo "</a>";
-                    }
+            if ($stmt->rowCount() > 0) {
+                echo "<div class='row d-flex flex-row row-cols-3'>";
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $images = explode(';', $row['image']);
+                    echo "<a class='text-decoration-none' href='product_details.php?product_id=" . $row["id"] . "'>";
+                    echo "<div class='col product-card shadow rounded'>";
+                    echo "<img src='./img/" . $images[0] . "' alt='Ảnh sản phẩm' class='image'><br><br>";
+                    echo "<h1 class='text-dark'>" . $row['tensanpham'] . "</h1>";
+                    $formatted_price = number_format($row["gia"], 0, ',', '.') . "";
+                    echo "<h3 class='text-secondary' >Giá: " . $formatted_price . "&nbsp;VNĐ</h3>";
+                    echo "<hr>";
+                    echo "<h3 class='text-warning'>XEM SẢN PHẨM</h3>";
                     echo "</div>";
-                } else {
-                    echo "Không có sản phẩm nào.";
+                    echo "</a>";
                 }
+                echo "</div>";
+            } else {
+                echo "Không có sản phẩm nào.";
+            }
 
-                // Đóng kết nối sau khi sử dụng
-                $conn = null;
-                ?>
+         
+            $conn = null;
+            ?>
+
 
 
 
